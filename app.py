@@ -6,9 +6,10 @@ import PyPDF2
 
 load_dotenv()
 
+# --- BRANDED PAGE CONFIG ---
 st.set_page_config(
-    page_title="Global Scholarship Engine",
-    page_icon="🎓",
+    page_title="Aik Kadam Decoder | Global Opportunity AI",
+    page_icon="🌍",
     layout="centered"
 )
 
@@ -34,30 +35,29 @@ st.markdown("""
     }
 
     /* ---------------------------------
-       BRANDED GLOWING TABS (OVERFLOW FIX)
+       BRANDED GLOWING TABS (FIXED OVERFLOW)
        --------------------------------- */
-    /* Kills the native Streamlit scroll fade */
     div[data-testid="stTabs"] > div > div > div {
         overflow: visible !important; 
     }
     div[data-baseweb="tab_list"] {
         background-color: rgba(20, 20, 20, 0.8);
-        border-radius: 25px; /* Rounded rectangle looks better if they wrap */
+        border-radius: 25px;
         padding: 8px;
         border: 1px solid rgba(245, 166, 35, 0.2);
         display: flex;
-        flex-wrap: wrap; /* Allows tabs to drop to next line on small screens */
+        flex-wrap: wrap;
         justify-content: center;
-        gap: 8px; /* Replaces margin */
+        gap: 8px;
         margin-bottom: 2.5rem;
     }
     button[data-baseweb="tab"] {
         border-radius: 50px !important;
-        padding: 10px 18px !important; /* Slightly more compact to fit 4 tabs */
+        padding: 10px 18px !important;
         margin: 0 !important;
         background-color: transparent !important;
         color: #a1a1aa !important;
-        font-size: 0.95rem !important; /* Slightly smaller text */
+        font-size: 0.95rem !important;
         font-weight: 600 !important;
         border: none !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -134,7 +134,7 @@ st.markdown("""
         opacity: 1 !important;
     }
 
-    /* --- FILE UPLOADER CSS FIX (Aik Kadam Theme) --- */
+    /* --- FILE UPLOADER CSS --- */
     [data-testid="stFileUploader"] > section {
         background-color: #0f0f0f !important;
         border: 2px dashed #333333 !important;
@@ -152,10 +152,6 @@ st.markdown("""
         border-radius: 50px !important;
         font-weight: 600 !important;
         padding: 0.5rem 1.5rem !important;
-    }
-    [data-testid="stFileUploader"] button:hover {
-        border-color: #f5a623 !important;
-        color: #f5a623 !important;
     }
 
     /* ---------------------------------
@@ -188,10 +184,6 @@ st.markdown("""
         border-bottom: 1px solid rgba(245, 166, 35, 0.2) !important;
         padding-bottom: 0.5rem !important;
     }
-    .stMarkdown h3 {
-        color: #ffffff !important;
-        font-size: 1.15rem !important;
-    }
     
     .input-label {
         font-size: 0.85rem;
@@ -214,15 +206,15 @@ st.markdown("""
 tab1, tab2, tab3, tab4 = st.tabs(["🏛️ Program Finder", "🎓 Program Deep Dive", "🌍 Scholarship Matcher", "🔍 Scholarship Deep Dive"])
 
 # ==========================================
-# TAB 1: PROGRAM FINDER (Resume + Credentials)
+# TAB 1: PROGRAM FINDER
 # ==========================================
 with tab1:
     st.markdown("""
     <div class="hero-container">
-        <div class="hero-title">Academic <span>Program Finder</span></div>
+        <div class="hero-title">Aik Kadam <span>Decoder</span></div>
         <div class="hero-subtitle">
             <span class="viral-hook">Map out your academic future.</span>
-            Upload your resume and tell the AI your goals and budget. We will evaluate your GPA and experience, recommend the correct degree level, and find programs and scholarships that fit your profile.
+            Upload your resume and tell the AI your goals and budget. We will evaluate your GPA and experience to recommend the perfect degree level and programs.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -234,7 +226,7 @@ with tab1:
     career_goals = st.text_area(
         label="career_goals",
         height=150,
-        placeholder="e.g., 'I want to study AI in Europe or North America. My max budget is $15k/year but I need scholarships. (Note: Mention your GPA here if it is not on your resume)'",
+        placeholder="e.g., 'I want to study AI in Europe or North America. My max budget is $15k/year. (Mention your GPA here if it is not on your resume)'",
         label_visibility="collapsed"
     )
 
@@ -242,7 +234,7 @@ with tab1:
 
     if program_btn:
         if not uploaded_resume or not career_goals.strip():
-            st.error("⚠️ Please provide both your PDF resume and a brief description of your goals and budget.")
+            st.error("⚠️ Please provide both your PDF resume and a brief description of your goals.")
         else:
             pdf_reader = PyPDF2.PdfReader(uploaded_resume)
             resume_text = ""
@@ -250,45 +242,23 @@ with tab1:
                 resume_text += page.extract_text()
 
             api_key = os.getenv("GROQ_API_KEY")
-            if not api_key:
-                st.error("⚠️ System Error: GROQ_API_KEY is not set.")
-                st.stop()
-                
             client = Groq(api_key=api_key)
-            prompt = f"""You are an elite Higher Education, Admissions, and Financial Aid Counselor. 
-I am providing you with a student's RESUME and their PERSONAL CONTEXT (Goals, Budget, Preferences). 
+            prompt = f"""You are an elite Higher Education and Admissions Counselor. 
+Analyze the student's resume and goals to determine the best degree level and recommend 3-4 specific academic programs globally.
 
-Your task is to:
-1. Analyze their GPA, academic history, and professional experience from the resume/context.
-2. Determine the most appropriate degree level (e.g., Undergraduate, Masters, PhD, Post-Doc, or specialized diploma) based strictly on their credentials.
-3. Recommend the top 3-4 specific academic programs globally that fit their profile, goals, AND stated financial budget/constraints.
-
-Format your response EXACTLY like this:
-
+Format your response EXACTLY as:
 ## 📊 Profile Evaluation
-* **Current Standing:** [Brief assessment of their academic history, GPA, and professional readiness]
-* **Recommended Degree Level:** [e.g., Masters, PhD, etc.] and WHY this is the most logical next step.
+* **Current Standing:** [Brief assessment of GPA and readiness]
+* **Recommended Degree Level:** [e.g., Masters, PhD] and WHY.
 
 ## 🎓 Top Program Recommendations
-
-### 1. [Name of Academic Program] at [University Name]
-* **Why it fits:** [Explain alignment with their resume, credentials, and career goals]
-* **Estimated Average Cost:** [Provide a realistic tuition/fee range in USD, keeping their budget in mind]
-* **Relevant Scholarships:** [Name 1-2 specific scholarships applicable to this program or university to offset costs]
-
-[Repeat for the other programs]
-
-## 🚀 Next Strategic Step
-Provide 1 crucial, actionable piece of advice for their application strategy based on the weaknesses or strengths in their resume.
+[List programs with University, why it fits, cost range, and scholarships to target]
 
 ---
-PERSONAL CONTEXT & BUDGET:
-{career_goals}
-
-RESUME TEXT:
-{resume_text}
+CONTEXT: {career_goals}
+RESUME: {resume_text}
 """
-            with st.spinner("Evaluating credentials and scanning global universities... 🏛️"):
+            with st.spinner("Analyzing credentials... 🏛️"):
                 try:
                     response = client.chat.completions.create(
                         model="llama-3.3-70b-versatile",
@@ -298,77 +268,48 @@ RESUME TEXT:
                     st.success("Evaluation Complete!")
                     st.markdown(response.choices[0].message.content)
                 except Exception as e:
-                    st.error(f"Error reading or analyzing: {str(e)}")
+                    st.error(f"Error: {str(e)}")
 
 # ==========================================
-# TAB 2: PROGRAM DEEP DIVE (Search by Name)
+# TAB 2: PROGRAM DEEP DIVE
 # ==========================================
 with tab2:
     st.markdown("""
     <div class="hero-container">
-        <div class="hero-title">Academic Program <span>Deep Dive</span></div>
+        <div class="hero-title">Program <span>Deep Dive</span></div>
         <div class="hero-subtitle">
             <span class="viral-hook">Decode the exact syllabus & requirements.</span>
-            Have a specific university program in mind? Enter the name below and the AI will break down the core curriculum, admission requirements, costs, and career outcomes.
+            Enter a specific university program to see the core curriculum, admission requirements, costs, and career outcomes.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<span class="input-label">🎓 Enter University & Program Name</span>', unsafe_allow_html=True)
-    target_program = st.text_input(
-        label="target_program",
-        placeholder="e.g., 'MSc in Data Science at ETH Zurich', 'MBA at Harvard', 'BSc Computer Science at Stanford'...",
-        label_visibility="collapsed"
-    )
+    st.markdown('<span class="input-label">🎓 ENTER UNIVERSITY & PROGRAM NAME</span>', unsafe_allow_html=True)
+    target_program = st.text_input(label="target_program", placeholder="e.g., 'MSc in Data Science at ETH Zurich'...", label_visibility="collapsed")
 
-    prog_deep_btn = st.button("Decode this Program 🚀", type="primary", use_container_width=True, key="btn_prog_deep_dive")
+    prog_deep_btn = st.button("Decode this Program 🚀", type="primary", use_container_width=True)
 
     if prog_deep_btn:
         if not target_program.strip():
-            st.error("⚠️ Please enter a specific program and university name first.")
+            st.error("⚠️ Please enter a program name.")
         else:
             api_key = os.getenv("GROQ_API_KEY")
-            if not api_key:
-                st.error("⚠️ System Error: GROQ_API_KEY is not set.")
-                st.stop()
-                
             client = Groq(api_key=api_key)
-            prompt = f"""You are an expert Academic Advisor and University Counselor.
-Provide a highly detailed, structured breakdown of the following academic program: {target_program}.
-
-If you do not have reliable information on this specific program, state honestly that you do not know. 
-
-Otherwise, format your response EXACTLY using these headings:
-
-## 📋 Program Overview
-Provide a brief summary of the program, its typical duration, and its core academic focus.
-
-## ✅ Admission Requirements
-Use bullet points to list the exact requirements. Include typical GPA expectations, required standardized tests (GRE, GMAT, SAT, IELTS, TOEFL), and any work experience required.
-
-## 🎓 Core Curriculum & Specializations
-What will the student actually learn? List 3-4 key subjects, modules, or tracks offered in this program.
-
-## 💰 Estimated Costs
-What is the estimated tuition for international students? Mention if there are notable living expenses for this specific location.
-
-## 💼 Career Outcomes
-What do graduates typically go on to do? Mention typical job titles, expected salary ranges (if known), or top employers that recruit from this program.
-"""
-            with st.spinner("Retrieving university program data... 📚"):
+            prompt = f"Provide a detailed breakdown of the academic program: {target_program}. Include Admission Requirements, Curriculum, Estimated Costs, and Career Outcomes."
+            with st.spinner("Retrieving data..."):
                 try:
                     response = client.chat.completions.create(
                         model="llama-3.3-70b-versatile",
                         messages=[{"role": "user", "content": prompt}],
                         max_tokens=1500
                     )
-                    st.success("Program Breakdown Complete!")
+                    st.success("Breakdown Complete!")
                     st.markdown(response.choices[0].message.content)
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
 
 # ==========================================
-# TAB 3: SCHOLARSHIP MATCHER (Search by Profile)
+# TAB 3: SCHOLARSHIP MATCHER
 # ==========================================
 with tab3:
     st.markdown("""
@@ -376,54 +317,24 @@ with tab3:
         <div class="hero-title">Scholarship <span>Matcher</span></div>
         <div class="hero-subtitle">
             <span class="viral-hook">Fund your education without the debt.</span>
-            Tell the AI about your background, nationality, target country, and desired degree. It will act as a search engine to find the hidden grants and scholarships you actually qualify for.
+            Tell the AI about your background to find the hidden grants and scholarships you qualify for.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<span class="input-label">🌍 Enter Your Profile & Goals</span>', unsafe_allow_html=True)
-    student_profile = st.text_area(
-        label="student_profile",
-        height=200,
-        placeholder="e.g., 'I am a student from Pakistan looking to do a Masters in Computer Science in Canada or the UK. I have a 3.8 GPA and 2 years of work experience.'",
-        label_visibility="collapsed"
-    )
+    st.markdown('<span class="input-label">🌍 ENTER YOUR PROFILE & GOALS</span>', unsafe_allow_html=True)
+    student_profile = st.text_area(label="student_profile", height=200, placeholder="e.g., 'Student from Pakistan, 3.8 GPA, seeking Masters in UK'...", label_visibility="collapsed")
 
-    match_btn = st.button("Find My Scholarships 🎯", type="primary", use_container_width=True, key="btn_matcher")
+    match_btn = st.button("Find My Scholarships 🎯", type="primary", use_container_width=True)
 
     if match_btn:
         if not student_profile.strip():
-            st.error("⚠️ Please enter your profile details first.")
+            st.error("⚠️ Please enter profile details.")
         else:
             api_key = os.getenv("GROQ_API_KEY")
-            if not api_key:
-                st.error("⚠️ System Error: GROQ_API_KEY is not set.")
-                st.stop()
-                
             client = Groq(api_key=api_key)
-            prompt = f"""You are an expert International Admissions and Financial Aid Advisor.
-Based on the student profile below, generate a list of the top 4-5 specific scholarships, grants, or fellowships they are most likely eligible for. 
-
-Do not suggest generic student loans. Only suggest actual funding opportunities.
-
-Format your response EXACTLY like this:
-
-## 🎯 Top Scholarship Matches
-
-### 1. [Name of Scholarship]
-* **Target Region/University:** [Where is this valid?]
-* **Why it's a match:** [1 sentence on why this fits their specific profile]
-* **Coverage:** [Briefly state what it pays for - e.g., Full Tuition + Living Stipend]
-
-[Repeat for the other scholarships]
-
-## ⚠️ Action Plan
-Give the student 2 highly specific steps they should take this week to start preparing their profile for these applications.
-
-STUDENT PROFILE:
-{student_profile}
-"""
-            with st.spinner("Scanning global scholarship opportunities... 🌍"):
+            prompt = f"Find 4-5 eligible scholarships for this profile: {student_profile}. Include coverage and why they match."
+            with st.spinner("Scanning global database..."):
                 try:
                     response = client.chat.completions.create(
                         model="llama-3.3-70b-versatile",
@@ -435,9 +346,8 @@ STUDENT PROFILE:
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
 
-
 # ==========================================
-# TAB 4: SCHOLARSHIP DEEP DIVE (Search by Name)
+# TAB 4: SCHOLARSHIP DEEP DIVE
 # ==========================================
 with tab4:
     st.markdown("""
@@ -445,53 +355,24 @@ with tab4:
         <div class="hero-title">Scholarship <span>Deep Dive</span></div>
         <div class="hero-subtitle">
             <span class="viral-hook">Decode the exact requirements.</span>
-            Have a specific scholarship in mind? Enter the name below and the AI will break down the eligibility, what it covers, and the insider tips you need to win it.
+            Enter a scholarship name to see exactly what it covers and the insider tips to win it.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<span class="input-label">🎓 Enter Scholarship Name</span>', unsafe_allow_html=True)
-    scholarship_name = st.text_input(
-        label="scholarship_name_deep_dive",
-        placeholder="e.g., 'Chevening Scholarship', 'Erasmus Mundus', 'Rhodes Scholarship'...",
-        label_visibility="collapsed"
-    )
+    st.markdown('<span class="input-label">🎓 ENTER SCHOLARSHIP NAME</span>', unsafe_allow_html=True)
+    scholarship_name = st.text_input(label="scholarship_name_deep", placeholder="e.g., 'Chevening Scholarship'...", label_visibility="collapsed")
 
-    schol_deep_btn = st.button("Decode this Scholarship 🚀", type="primary", use_container_width=True, key="btn_schol_deep_dive")
+    schol_deep_btn = st.button("Decode this Scholarship 🚀", type="primary", use_container_width=True)
 
     if schol_deep_btn:
         if not scholarship_name.strip():
-            st.error("⚠️ Please enter a scholarship name first.")
+            st.error("⚠️ Please enter a name.")
         else:
             api_key = os.getenv("GROQ_API_KEY")
-            if not api_key:
-                st.error("⚠️ System Error: GROQ_API_KEY is not set.")
-                st.stop()
-                
             client = Groq(api_key=api_key)
-            prompt = f"""You are an expert International Admissions and Financial Aid Advisor. 
-Provide a detailed, highly structured breakdown of the following scholarship: {scholarship_name}.
-
-If you do not have reliable information on this specific scholarship, please state honestly that you do not know.
-
-Otherwise, format your response EXACTLY using these headings:
-
-## 📋 Overview
-What is this scholarship, who funds it, and what is its main goal?
-
-## ✅ Eligibility Criteria
-Use bullet points to list the exact requirements (nationality, GPA, work experience, degree level, etc.).
-
-## 💰 What it Covers
-Does it cover full tuition? Stipend? Flights? Be specific.
-
-## 📅 General Application Timeline
-When does it typically open and close? (Note: Remind the user to check the official website for exact current dates).
-
-## 💡 Insider Tips to Win
-What are the reviewers actually looking for in the essay/interview? Give 2-3 specific, actionable tips to make an application stand out.
-"""
-            with st.spinner("Accessing global funding database... 📚"):
+            prompt = f"Provide a breakdown for scholarship: {scholarship_name}. Include Eligibility, Coverage, Timeline, and Tips to Win."
+            with st.spinner("Accessing database..."):
                 try:
                     response = client.chat.completions.create(
                         model="llama-3.3-70b-versatile",
