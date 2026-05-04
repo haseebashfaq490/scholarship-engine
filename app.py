@@ -204,8 +204,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- APP LAYOUT (3 TABS REORDERED) ---
-tab1, tab2, tab3 = st.tabs(["🏛️ Program Finder", "🌍 Scholarship Matcher", "🔍 Scholarship Deep Dive"])
+# --- APP LAYOUT (4 TABS) ---
+tab1, tab2, tab3, tab4 = st.tabs(["🏛️ Program Finder", "🎓 Program Deep Dive", "🌍 Scholarship Matcher", "🔍 Scholarship Deep Dive"])
 
 # ==========================================
 # TAB 1: PROGRAM FINDER (Resume + Credentials)
@@ -294,11 +294,77 @@ RESUME TEXT:
                 except Exception as e:
                     st.error(f"Error reading or analyzing: {str(e)}")
 
-
 # ==========================================
-# TAB 2: SCHOLARSHIP MATCHER (Search by Profile)
+# TAB 2: PROGRAM DEEP DIVE (Search by Name)
 # ==========================================
 with tab2:
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">Academic Program <span>Deep Dive</span></div>
+        <div class="hero-subtitle">
+            <span class="viral-hook">Decode the exact syllabus & requirements.</span>
+            Have a specific university program in mind? Enter the name below and the AI will break down the core curriculum, admission requirements, costs, and career outcomes.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<span class="input-label">🎓 Enter University & Program Name</span>', unsafe_allow_html=True)
+    target_program = st.text_input(
+        label="target_program",
+        placeholder="e.g., 'MSc in Data Science at ETH Zurich', 'MBA at Harvard', 'BSc Computer Science at Stanford'...",
+        label_visibility="collapsed"
+    )
+
+    prog_deep_btn = st.button("Decode this Program 🚀", type="primary", use_container_width=True, key="btn_prog_deep_dive")
+
+    if prog_deep_btn:
+        if not target_program.strip():
+            st.error("⚠️ Please enter a specific program and university name first.")
+        else:
+            api_key = os.getenv("GROQ_API_KEY")
+            if not api_key:
+                st.error("⚠️ System Error: GROQ_API_KEY is not set.")
+                st.stop()
+                
+            client = Groq(api_key=api_key)
+            prompt = f"""You are an expert Academic Advisor and University Counselor.
+Provide a highly detailed, structured breakdown of the following academic program: {target_program}.
+
+If you do not have reliable information on this specific program, state honestly that you do not know. 
+
+Otherwise, format your response EXACTLY using these headings:
+
+## 📋 Program Overview
+Provide a brief summary of the program, its typical duration, and its core academic focus.
+
+## ✅ Admission Requirements
+Use bullet points to list the exact requirements. Include typical GPA expectations, required standardized tests (GRE, GMAT, SAT, IELTS, TOEFL), and any work experience required.
+
+## 🎓 Core Curriculum & Specializations
+What will the student actually learn? List 3-4 key subjects, modules, or tracks offered in this program.
+
+## 💰 Estimated Costs
+What is the estimated tuition for international students? Mention if there are notable living expenses for this specific location.
+
+## 💼 Career Outcomes
+What do graduates typically go on to do? Mention typical job titles, expected salary ranges (if known), or top employers that recruit from this program.
+"""
+            with st.spinner("Retrieving university program data... 📚"):
+                try:
+                    response = client.chat.completions.create(
+                        model="llama-3.3-70b-versatile",
+                        messages=[{"role": "user", "content": prompt}],
+                        max_tokens=1500
+                    )
+                    st.success("Program Breakdown Complete!")
+                    st.markdown(response.choices[0].message.content)
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
+
+# ==========================================
+# TAB 3: SCHOLARSHIP MATCHER (Search by Profile)
+# ==========================================
+with tab3:
     st.markdown("""
     <div class="hero-container">
         <div class="hero-title">Scholarship <span>Matcher</span></div>
@@ -365,9 +431,9 @@ STUDENT PROFILE:
 
 
 # ==========================================
-# TAB 3: DEEP DIVE (Search by Name)
+# TAB 4: SCHOLARSHIP DEEP DIVE (Search by Name)
 # ==========================================
-with tab3:
+with tab4:
     st.markdown("""
     <div class="hero-container">
         <div class="hero-title">Scholarship <span>Deep Dive</span></div>
@@ -380,14 +446,14 @@ with tab3:
 
     st.markdown('<span class="input-label">🎓 Enter Scholarship Name</span>', unsafe_allow_html=True)
     scholarship_name = st.text_input(
-        label="scholarship_name",
+        label="scholarship_name_deep_dive",
         placeholder="e.g., 'Chevening Scholarship', 'Erasmus Mundus', 'Rhodes Scholarship'...",
         label_visibility="collapsed"
     )
 
-    search_btn = st.button("Decode this Scholarship 🚀", type="primary", use_container_width=True, key="btn_deep_dive")
+    schol_deep_btn = st.button("Decode this Scholarship 🚀", type="primary", use_container_width=True, key="btn_schol_deep_dive")
 
-    if search_btn:
+    if schol_deep_btn:
         if not scholarship_name.strip():
             st.error("⚠️ Please enter a scholarship name first.")
         else:
