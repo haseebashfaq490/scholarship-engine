@@ -34,24 +34,30 @@ st.markdown("""
     }
 
     /* ---------------------------------
-       BRANDED GLOWING TABS
+       BRANDED GLOWING TABS (OVERFLOW FIX)
        --------------------------------- */
+    /* Kills the native Streamlit scroll fade */
+    div[data-testid="stTabs"] > div > div > div {
+        overflow: visible !important; 
+    }
     div[data-baseweb="tab_list"] {
         background-color: rgba(20, 20, 20, 0.8);
-        border-radius: 50px;
-        padding: 6px;
+        border-radius: 25px; /* Rounded rectangle looks better if they wrap */
+        padding: 8px;
         border: 1px solid rgba(245, 166, 35, 0.2);
         display: flex;
+        flex-wrap: wrap; /* Allows tabs to drop to next line on small screens */
         justify-content: center;
+        gap: 8px; /* Replaces margin */
         margin-bottom: 2.5rem;
     }
     button[data-baseweb="tab"] {
         border-radius: 50px !important;
-        padding: 12px 28px !important;
-        margin: 0 4px !important;
+        padding: 10px 18px !important; /* Slightly more compact to fit 4 tabs */
+        margin: 0 !important;
         background-color: transparent !important;
         color: #a1a1aa !important;
-        font-size: 1rem !important;
+        font-size: 0.95rem !important; /* Slightly smaller text */
         font-weight: 600 !important;
         border: none !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
