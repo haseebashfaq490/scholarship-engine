@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- PREMIUM MODERN CSS STYLING ---
+# --- AIK KADAM BRAND STYLING ---
 st.markdown("""
 <style>
     /* Hide default Streamlit clutter */
@@ -19,11 +19,11 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Professional Dark Theme Background */
+    /* Aik Kadam Dark Theme Background */
     .stApp {
-        background-color: #0f172a;
-        background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 80%);
-        color: #f8fafc;
+        background-color: #050505;
+        background-image: radial-gradient(circle at 15% 40%, rgba(245, 166, 35, 0.15) 0%, #050505 70%);
+        color: #f3f4f6;
     }
 
     .block-container {
@@ -33,37 +33,36 @@ st.markdown("""
     }
 
     /* ---------------------------------
-       MODERN GLOWING TABS
+       BRANDED GLOWING TABS
        --------------------------------- */
     div[data-baseweb="tab_list"] {
-        background-color: rgba(30, 41, 59, 0.8);
-        border-radius: 20px;
-        padding: 5px;
-        border: 1px solid rgba(56, 189, 248, 0.2);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        background-color: rgba(20, 20, 20, 0.8);
+        border-radius: 50px;
+        padding: 6px;
+        border: 1px solid rgba(245, 166, 35, 0.2);
         display: flex;
         justify-content: center;
         margin-bottom: 2.5rem;
     }
     button[data-baseweb="tab"] {
-        border-radius: 15px !important;
-        padding: 12px 24px !important;
+        border-radius: 50px !important;
+        padding: 12px 28px !important;
         margin: 0 4px !important;
         background-color: transparent !important;
-        color: #94a3b8 !important;
+        color: #a1a1aa !important;
         font-size: 1rem !important;
         font-weight: 600 !important;
         border: none !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     button[data-baseweb="tab"]:hover {
-        color: #f1f5f9 !important;
+        color: #ffffff !important;
         background-color: rgba(255, 255, 255, 0.05) !important;
     }
     button[data-baseweb="tab"][aria-selected="true"] {
-        background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%) !important;
-        color: white !important;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4) !important;
+        background: #f5a623 !important;
+        color: #000000 !important;
+        box-shadow: 0 4px 15px rgba(245, 166, 35, 0.25) !important;
     }
 
     /* ---------------------------------
@@ -75,29 +74,31 @@ st.markdown("""
         animation: fadeIn 0.8s ease-out;
     }
     .hero-title {
-        font-size: 3.8rem;
+        font-size: 4rem;
         font-weight: 900;
         letter-spacing: -0.02em;
-        background: linear-gradient(to right, #ffffff, #e0f2fe, #bae6fd);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #ffffff;
         margin-bottom: 0.5rem;
         line-height: 1.1;
     }
+    .hero-title span {
+        color: #f5a623;
+    }
     .hero-subtitle {
         font-size: 1.15rem;
-        color: #cbd5e1;
+        color: #a1a1aa;
         max-width: 650px;
         margin: 0 auto 1.5rem auto;
         line-height: 1.6;
     }
     .viral-hook {
-        color: #38bdf8;
+        color: #f5a623;
         font-weight: 800;
-        font-size: 1.35rem;
+        font-size: 1.25rem;
         display: block;
-        margin-bottom: 0.5rem;
-        letter-spacing: 0.01em;
+        margin-bottom: 0.8rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
     }
 
     /* ---------------------------------
@@ -105,16 +106,16 @@ st.markdown("""
        --------------------------------- */
     div[data-baseweb="input"] > div,
     div[data-baseweb="textarea"] > div {
-        background-color: #1e293b !important; 
-        border: 2px solid #334155 !important;
-        border-radius: 16px;
+        background-color: #0f0f0f !important; 
+        border: 1px solid #333333 !important;
+        border-radius: 12px;
         transition: all 0.3s ease;
     }
     div[data-baseweb="input"] > div:focus-within,
     div[data-baseweb="textarea"] > div:focus-within {
-        border-color: #0ea5e9 !important;
-        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15) !important;
-        background-color: #0f172a !important;
+        border-color: #f5a623 !important;
+        box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.2) !important;
+        background-color: #141414 !important;
     }
     input, textarea {
         color: #ffffff !important;
@@ -122,7 +123,7 @@ st.markdown("""
         padding: 1.2rem !important;
     }
     input::placeholder, textarea::placeholder {
-        color: #94a3b8 !important;
+        color: #71717a !important;
         opacity: 1 !important;
     }
 
@@ -130,41 +131,40 @@ st.markdown("""
        BUTTONS
        --------------------------------- */
     button[kind="primary"] {
-        background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%) !important;
-        color: white !important;
+        background: #f5a623 !important;
+        color: #000000 !important;
         border: none !important;
-        border-radius: 12px !important;
+        border-radius: 50px !important;
         padding: 1.5rem !important;
-        font-size: 1.2rem !important;
-        font-weight: 700 !important;
+        font-size: 1.15rem !important;
+        font-weight: 800 !important;
         letter-spacing: 0.02em !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
         margin-top: 1rem !important;
     }
     button[kind="primary"]:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4) !important;
-        background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%) !important;
+        box-shadow: 0 8px 25px rgba(245, 166, 35, 0.3) !important;
+        background: #fbbf24 !important;
     }
 
     /* Output Markdown Styling */
     .stMarkdown h2 {
-        color: #bae6fd !important;
+        color: #f5a623 !important;
         font-size: 1.3rem !important;
         font-weight: 700 !important;
         margin-top: 2rem !important;
-        border-bottom: 1px solid rgba(56, 189, 248, 0.2) !important;
+        border-bottom: 1px solid rgba(245, 166, 35, 0.2) !important;
         padding-bottom: 0.5rem !important;
     }
     
     .input-label {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #e2e8f0;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #d4d4d8;
         margin-bottom: 0.5rem;
         display: block;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
     }
 
@@ -184,15 +184,15 @@ tab1, tab2 = st.tabs(["🔍 Scholarship Deep Dive", "🌍 Profile Matcher"])
 with tab1:
     st.markdown("""
     <div class="hero-container">
-        <div class="hero-title">Scholarship Deep Dive</div>
+        <div class="hero-title">Scholarship <span>Deep Dive</span></div>
         <div class="hero-subtitle">
-            <span class="viral-hook">Decode the exact requirements. 🔎</span>
+            <span class="viral-hook">Decode the exact requirements.</span>
             Have a specific scholarship in mind? Enter the name below and the AI will break down the eligibility, what it covers, and the insider tips you need to win it.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<span class="input-label">🎓 ENTER SCHOLARSHIP NAME</span>', unsafe_allow_html=True)
+    st.markdown('<span class="input-label">🎓 Enter Scholarship Name</span>', unsafe_allow_html=True)
     scholarship_name = st.text_input(
         label="scholarship_name",
         placeholder="e.g., 'Chevening Scholarship', 'Erasmus Mundus', 'Rhodes Scholarship'...",
@@ -251,15 +251,15 @@ What are the reviewers actually looking for in the essay/interview? Give 2-3 spe
 with tab2:
     st.markdown("""
     <div class="hero-container">
-        <div class="hero-title">Smart Profile Matcher</div>
+        <div class="hero-title">Smart <span>Profile Matcher</span></div>
         <div class="hero-subtitle">
-            <span class="viral-hook">Fund your education without the debt. 💸</span>
+            <span class="viral-hook">Fund your education without the debt.</span>
             Tell the AI about your background, nationality, target country, and desired degree. It will act as a search engine to find the hidden grants and scholarships you actually qualify for.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<span class="input-label">🌍 ENTER YOUR PROFILE & GOALS</span>', unsafe_allow_html=True)
+    st.markdown('<span class="input-label">🌍 Enter Your Profile & Goals</span>', unsafe_allow_html=True)
     student_profile = st.text_area(
         label="student_profile",
         height=200,
