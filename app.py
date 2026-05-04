@@ -2,6 +2,7 @@ import streamlit as st
 from groq import Groq
 from dotenv import load_dotenv
 import os
+import PyPDF2
 
 load_dotenv()
 
@@ -127,6 +128,30 @@ st.markdown("""
         opacity: 1 !important;
     }
 
+    /* --- FILE UPLOADER CSS FIX (Aik Kadam Theme) --- */
+    [data-testid="stFileUploader"] > section {
+        background-color: #0f0f0f !important;
+        border: 2px dashed #333333 !important;
+        border-radius: 12px !important;
+    }
+    [data-testid="stFileUploader"] div, 
+    [data-testid="stFileUploader"] span, 
+    [data-testid="stFileUploader"] small {
+        color: #d4d4d8 !important;
+    }
+    [data-testid="stFileUploader"] button {
+        background: linear-gradient(135deg, #333333 0%, #141414 100%) !important;
+        color: #ffffff !important;
+        border: 1px solid #333333 !important;
+        border-radius: 50px !important;
+        font-weight: 600 !important;
+        padding: 0.5rem 1.5rem !important;
+    }
+    [data-testid="stFileUploader"] button:hover {
+        border-color: #f5a623 !important;
+        color: #f5a623 !important;
+    }
+
     /* ---------------------------------
        BUTTONS
        --------------------------------- */
@@ -157,6 +182,10 @@ st.markdown("""
         border-bottom: 1px solid rgba(245, 166, 35, 0.2) !important;
         padding-bottom: 0.5rem !important;
     }
+    .stMarkdown h3 {
+        color: #ffffff !important;
+        font-size: 1.15rem !important;
+    }
     
     .input-label {
         font-size: 0.85rem;
@@ -175,8 +204,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- APP LAYOUT (TABS) ---
-tab1, tab2 = st.tabs(["🔍 Scholarship Deep Dive", "🌍 Profile Matcher"])
+# --- APP LAYOUT (3 TABS) ---
+tab1, tab2, tab3 = st.tabs(["🔍 Scholarship Deep Dive", "🌍 Profile Matcher", "🏛️ Program Finder"])
 
 # ==========================================
 # TAB 1: DEEP DIVE (Search by Name)
@@ -199,7 +228,7 @@ with tab1:
         label_visibility="collapsed"
     )
 
-    search_btn = st.button("Decode this Scholarship 🚀", type="primary", use_container_width=True)
+    search_btn = st.button("Decode this Scholarship 🚀", type="primary", use_container_width=True, key="btn_deep_dive")
 
     if search_btn:
         if not scholarship_name.strip():
@@ -267,7 +296,7 @@ with tab2:
         label_visibility="collapsed"
     )
 
-    match_btn = st.button("Find My Scholarships 🎯", type="primary", use_container_width=True)
+    match_btn = st.button("Find My Scholarships 🎯", type="primary", use_container_width=True, key="btn_matcher")
 
     if match_btn:
         if not student_profile.strip():
@@ -312,3 +341,84 @@ STUDENT PROFILE:
                     st.markdown(response.choices[0].message.content)
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
+
+# ==========================================
+# TAB 3: PROGRAM FINDER (Resume + Goals)
+# ==========================================
+with tab3:
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">Academic <span>Program Recommender</span></div>
+        <div class="hero-subtitle">
+            <span class="viral-hook">Map out your academic future.</span>
+            Upload your resume and tell the AI what you want to achieve. We will recommend the best global programs, target universities, average costs, and the exact scholarships to aim for.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<span class="input-label">📄 UPLOAD YOUR RESUME (PDF)</span>', unsafe_allow_html=True)
+    uploaded_resume = st.file_uploader("resume_uploader", type=["pdf"], label_visibility="collapsed")
+
+    st.markdown('<span class="input-label" style="margin-top: 1.5rem;">🎯 WHAT DO YOU WANT TO ACHIEVE?</span>', unsafe_allow_html=True)
+    career_goals = st.text_area(
+        label="career_goals",
+        height=150,
+        placeholder="e.g., 'I want to transition into AI and Machine Learning to build tech for climate change. I prefer 1-year programs in Europe or North America.'",
+        label_visibility="collapsed"
+    )
+
+    program_btn = st.button("Find My Dream Programs 🏛️", type="primary", use_container_width=True, key="btn_programs")
+
+    if program_btn:
+        if not uploaded_resume or not career_goals.strip():
+            st.error("⚠️ Please provide both your PDF resume and a brief description of your goals.")
+        else:
+            pdf_reader = PyPDF2.PdfReader(uploaded_resume)
+            resume_text = ""
+            for page in pdf_reader.pages:
+                resume_text += page.extract_text()
+
+            api_key = os.getenv("GROQ_API_KEY")
+            if not api_key:
+                st.error("⚠️ System Error: GROQ_API_KEY is not set.")
+                st.stop()
+                
+            client = Groq(api_key=api_key)
+            prompt = f"""You are an elite Higher Education and Career Counselor. 
+I am providing you with a student's RESUME and their CAREER GOALS. 
+
+Analyze their background and aspirations, then recommend the top 3-4 specific academic programs (Masters, PhD, or specialized diplomas) they should pursue globally.
+
+Format your response EXACTLY like this:
+
+## 🎓 Top Program Recommendations
+
+### 1. [Name of Academic Program] (e.g., MSc in Data Science)
+* **Why it fits:** [1-2 sentences on why this aligns perfectly with their resume and goals]
+* **Top Universities to Target:** [List 2-3 specific global universities known for this exact program]
+* **Estimated Average Cost:** [Provide a realistic range in USD for international students]
+* **Relevant Scholarships to Aim For:** [Name 1-2 specific scholarships applicable to this program or field]
+
+[Repeat for the other programs]
+
+## 🚀 Next Strategic Step
+Provide 1 crucial, actionable piece of advice for their university application strategy based on the weaknesses or strengths in their resume.
+
+---
+CAREER GOALS:
+{career_goals}
+
+RESUME TEXT:
+{resume_text}
+"""
+            with st.spinner("Analyzing profile and scanning global university programs... 🏛️"):
+                try:
+                    response = client.chat.completions.create(
+                        model="llama-3.3-70b-versatile",
+                        messages=[{"role": "user", "content": prompt}],
+                        max_tokens=1500
+                    )
+                    st.success("Program Recommendations Ready!")
+                    st.markdown(response.choices[0].message.content)
+                except Exception as e:
+                    st.error(f"Error reading or analyzing: {str(e)}")
